@@ -91,6 +91,10 @@ protected:
     static bool auto_white_balance;
     */
 
+    /* Frame skipping logic */
+    static int stride;
+    static int stride_count;
+
     /* Internal functions */
     static bool init();
     static bool start();

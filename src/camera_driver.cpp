@@ -49,6 +49,9 @@ int AbstractV4LUSBCam::framerate = 10;
 std::vector<camera_control_t> AbstractV4LUSBCam::controls = std::vector<camera_control_t>();
 std::set<std::string> AbstractV4LUSBCam::ignore_controls = std::set<std::string>();
 
+/* Frame skipping logic */
+int AbstractV4LUSBCam::stride = 1;
+int AbstractV4LUSBCam::stride_count = 0;
 
 bool AbstractV4LUSBCam::init()
 {
@@ -426,6 +429,7 @@ bool AbstractV4LUSBCam::start_capture()
         printf("Video4linux: unable to start stream (%i)\n", errno);
         return false;
     }
+    stride_count = 0;
     streaming_status = true;
     return true;
 }
@@ -604,6 +608,13 @@ camera_image_t *AbstractV4LUSBCam::read_frame()
     default:
         printf("Attempt to grab the frame via unknown I/O method (%i)\n", errno);
     }
+
+    stride_count++;
+    if ((stride_count % stride) != 0) {
+        return nullptr;
+    }
+    stride_count = 0;
+
     bool processing_result = false;
     if(io_method == IO_METHOD_READ)
         processing_result = process_image(buffers[0].start, len, image);

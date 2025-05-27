@@ -136,18 +136,25 @@ UsbCam::UsbCam():
     node.getParam("image_width", image_width);
     node.getParam("image_height", image_height);
     node.getParam("framerate", framerate);
+    node.param<int>("stride", stride, 1);
     node.param<std::string>("start_service_name", _service_start_name, "start_capture");
     node.param<std::string>("stop_service_name", _service_stop_name, "stop_capture");
 
+    if (stride < 1) {
+        ROS_WARN("Invalid 'stride' parameter value (%d), must be 1 or greater. Defaulting to 1.", stride);
+        stride = 1;
+    }
+
     // Advertising camera
-    ROS_INFO("Initializing ROS V4L USB camera '%s' (%s) at %dx%d via %s (%s) at %i FPS",
+    ROS_INFO("Initializing ROS V4L USB camera '%s' (%s) at %dx%d via %s (%s) at %i FPS and %i stride",
              camera_name.c_str(),
              video_device_name.c_str(),
              image_width,
              image_height,
              io_method_name.c_str(),
              pixel_format_name.c_str(),
-             framerate);
+             framerate,
+             stride);
     _image_pub = image_transport->advertiseCamera(camera_transport_suffix, 1);
     image_pub = &_image_pub;
     camera_info = new camera_info_manager::CameraInfoManager(node, camera_name, camera_info_url);

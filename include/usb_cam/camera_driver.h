@@ -92,7 +92,7 @@ protected:
     */
 
     /* Frame skipping logic */
-    static int stride;
+    static int framestride;
     static int stride_count;
 
     /* Internal functions */

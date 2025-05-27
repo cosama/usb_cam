@@ -136,7 +136,7 @@ UsbCam::UsbCam():
     node.getParam("image_width", image_width);
     node.getParam("image_height", image_height);
     node.getParam("framerate", framerate);
-    node.param<int>("framestride", stride, 1);
+    node.param<int>("framestride", framestride, 1);
     node.param<std::string>("start_service_name", _service_start_name, "start_capture");
     node.param<std::string>("stop_service_name", _service_stop_name, "stop_capture");
 

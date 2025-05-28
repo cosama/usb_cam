@@ -292,7 +292,7 @@ void UsbCam::frame_timer_callback(const ros::TimerEvent &event)
         camera_image_t* new_image = read_frame();
         if(new_image == nullptr)
         {
-            ROS_ERROR("Video4linux: frame grabber failed");
+            if(!frame_skipped) ROS_ERROR("Video4linux: frame grabber failed");
             return;
         }
         img_msg->header.stamp.sec = new_image->stamp.tv_sec;

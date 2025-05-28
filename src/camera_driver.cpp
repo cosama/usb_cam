@@ -52,6 +52,7 @@ std::set<std::string> AbstractV4LUSBCam::ignore_controls = std::set<std::string>
 /* Frame skipping logic */
 int AbstractV4LUSBCam::framestride = 1;
 int AbstractV4LUSBCam::stride_count = 0;
+bool AbstractV4LUSBCam::frame_skipped = false;
 
 bool AbstractV4LUSBCam::init()
 {
@@ -498,6 +499,7 @@ AbstractV4LUSBCam::AbstractV4LUSBCam()
 
 camera_image_t *AbstractV4LUSBCam::read_frame()
 {
+    frame_skipped = false;
     if((image->width == 0) || (image->height == 0))
         return nullptr;
 
@@ -611,6 +613,7 @@ camera_image_t *AbstractV4LUSBCam::read_frame()
 
     stride_count++;
     if ((stride_count % framestride) != 0) {
+        frame_skipped = true;
         return nullptr;
     }
     stride_count = 0;

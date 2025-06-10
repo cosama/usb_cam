@@ -281,7 +281,7 @@ UsbCam::UsbCam():
     node.param<bool>("autofocus", autofocus, false);
     node.param<bool>("autoexposure", autoexposure, true);
     node.param<bool>("auto_white_balance", auto_white_balance, false);
-    */        yappi \
+    */
     adjust_camera();
 
     // Creating timer

@@ -135,11 +135,24 @@ UsbCam::UsbCam():
     node.param<std::string>("camera_info_url", camera_info_url, "");
     node.getParam("image_width", image_width);
     node.getParam("image_height", image_height);
-    node.getParam("framerate", framerate);
-    node.param<int>("framestride", framestride, 1);
+    int output_framerate;
+    node.getParam("framerate", output_framerate);
+    node.param<int>("internal_framerate", framerate, 30);
     node.param<std::string>("start_service_name", _service_start_name, "start_capture");
     node.param<std::string>("stop_service_name", _service_stop_name, "stop_capture");
 
+    //calculate and test framestride
+    if (output_framerate == 0) {
+        ROS_ERROR("Requested output framerate cannot be 0.");
+        node.shutdown();
+        return;
+    }
+    if ((framerate % output_framerate) != 0){
+        ROS_ERROR("Invalid framrate, can not divide internal_framerate of %d by requested framerate of %d.", framerate, output_framerate);
+        node.shutdown();
+        return;
+    }
+    framestride = framerate / output_framerate;
     if (framestride < 1) {
         ROS_WARN("Invalid 'framestride' parameter value (%d), must be 1 or greater. Defaulting to 1.", framestride);
         framestride = 1;
@@ -268,7 +281,7 @@ UsbCam::UsbCam():
     node.param<bool>("autofocus", autofocus, false);
     node.param<bool>("autoexposure", autoexposure, true);
     node.param<bool>("auto_white_balance", auto_white_balance, false);
-    */
+    */        yappi \
     adjust_camera();
 
     // Creating timer
